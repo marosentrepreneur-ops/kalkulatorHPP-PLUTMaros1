@@ -1,0 +1,349 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hitung HPP UMKM</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: form bertahap di kiri, panel hasil menempel di kanan; di ponsel hasil ringkas di bar bawah. */
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --surface2:#E8EEEB; --fg:#14211E; --muted:#56655F; --line:#D3DDD8;
+  --accent:#0B6B5B; --accent-fg:#FFFFFF; --good:#1B7F45; --good-bg:#DDF1E5; --bad:#B3261E; --bad-bg:#FBE3E0; --warn:#8A5200; --warn-bg:#FCEFD2;
+  --c1:#0B6B5B; --c2:#D99A00; --c3:#3567C9; --c4:#B8487A;
+  --font-display:"Space Grotesk","Inter",system-ui,sans-serif; --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1614; --surface:#16211E; --surface2:#1E2D29; --fg:#E7EFEC; --muted:#9BAEA7; --line:#2B3B36;
+    --accent:#4FD1B4; --accent-fg:#06211B; --good:#5BD38A; --good-bg:#17352A; --bad:#FF8A80; --bad-bg:#3C1C1A; --warn:#F0B14A; --warn-bg:#3A2B0E;
+    --c1:#4FD1B4; --c2:#F0B84A; --c3:#7FA7FF; --c4:#F08AB6; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1614; --surface:#16211E; --surface2:#1E2D29; --fg:#E7EFEC; --muted:#9BAEA7; --line:#2B3B36;
+  --accent:#4FD1B4; --accent-fg:#06211B; --good:#5BD38A; --good-bg:#17352A; --bad:#FF8A80; --bad-bg:#3C1C1A; --warn:#F0B14A; --warn-bg:#3A2B0E;
+  --c1:#4FD1B4; --c2:#F0B84A; --c3:#7FA7FF; --c4:#F08AB6; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.5;
+  padding-block:20px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2{font-family:var(--font-display);margin:0;text-wrap:balance}
+h1{font-size:28px;line-height:1.15;letter-spacing:-.01em}
+h2{font-size:18px;line-height:1.25}
+.lead{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0 14px}
+.tools select{flex:1 1 220px;min-width:0}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px;font-weight:500}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.danger{color:var(--bad)}
+select,input{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.note{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 12px;margin:0 0 14px;font-size:14px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media (min-width:900px){.grid{grid-template-columns:minmax(0,1fr) 380px}.result{position:sticky;top:16px}.dock{display:none!important}body{padding-bottom:40px}}
+.forms{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px}
+.card .help{color:var(--muted);font-size:13px;margin:4px 0 12px}
+.tot{font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f>span{font-size:12px;color:var(--muted)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:12px 0;border-top:1px solid var(--line);align-items:end}
+.row:first-of-type{border-top:0;padding-top:0}
+.row .w2{grid-column:span 2}
+.rowend{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.sub{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px}
+.ico{border:1px solid var(--line);background:transparent;border-radius:8px;width:34px;height:34px;font-size:18px;line-height:1;color:var(--muted);flex:none}
+.ico:hover{color:var(--bad);border-color:var(--bad)}
+.add{margin-top:6px}
+.result .card{padding:18px}
+.hero small{display:block;color:var(--muted);font-size:13px}
+.big{font-family:var(--font-display);font-weight:700;font-size:38px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin:2px 0 4px}
+.hero p{margin:0;color:var(--muted);font-size:13px}
+.bar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--surface2);margin:16px 0 10px}
+.bar i{display:block;height:100%}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.legend li{display:grid;grid-template-columns:12px 1fr auto 52px;gap:8px;align-items:center;font-size:14px}
+.legend .dot{width:10px;height:10px;border-radius:3px}
+.legend .v,.legend .p{font-variant-numeric:tabular-nums;text-align:right}
+.legend .p{color:var(--muted)}
+dl{margin:0;display:grid;gap:8px}
+dl>div{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+dt{color:var(--muted);font-size:14px;min-width:0}
+dd{margin:0;font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.sep{border-top:1px solid var(--line);margin:12px 0}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.pill.good{background:var(--good-bg);color:var(--good)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.h3{font-family:var(--font-display);font-size:15px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:space-between;gap:12px;background:var(--surface);border-top:1px solid var(--line);
+  padding:10px max(16px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px))}
+.dock div{min-width:0}.dock small{display:block;color:var(--muted);font-size:12px}
+.dock b{font-family:var(--font-display);font-size:20px;font-variant-numeric:tabular-nums}
+.formula{color:var(--muted);font-size:13px;max-width:78ch;margin:18px 0 0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);border-radius:8px;padding:8px 14px;font-size:14px;z-index:30}
+@media (min-width:900px){.toast{bottom:24px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <h1>Hitung HPP UMKM</h1>
+  <p class="lead">Masukkan bahan, kemasan, tenaga kerja, dan biaya bulanan. HPP per satuan, harga jual yang disarankan, laba, dan titik impas terhitung otomatis. Data tersimpan di perangkat dan browser yang Anda pakai, tidak dilihat orang lain.</p>
+
+  <div class="tools">
+    <select id="pilih" aria-label="Pilih produk"></select>
+    <button class="btn primary" type="button" data-act="baru">+ Produk baru</button>
+    <button class="btn" type="button" data-act="dup">Duplikat</button>
+    <span id="delzone"></span>
+  </div>
+
+  <div id="sampleNote" class="note" hidden>Ini contoh data usaha brownies kukus. Ubah angka di bawah dengan data usaha Anda, atau buat produk baru yang kosong.</div>
+
+  <div class="grid">
+    <div class="forms">
+      <section class="card">
+        <header><h2>Produk dan produksi</h2></header>
+        <p class="help">Satu batch adalah sekali produksi penuh, misalnya satu adonan atau satu kali masak.</p>
+        <div class="fields">
+          <label class="f"><span>Nama produk</span><input id="p-nama" type="text" data-p="nama"></label>
+          <label class="f"><span>Satuan jual (pcs, porsi, botol)</span><input id="p-satuan" type="text" data-p="satuan"></label>
+          <label class="f"><span>Hasil per batch</span><input id="p-output" type="number" inputmode="decimal" min="0" step="any" data-p="output"></label>
+          <label class="f"><span>Susut atau reject (%)</span><input id="p-susut" type="number" inputmode="decimal" min="0" max="100" step="any" data-p="susut"></label>
+          <label class="f"><span>Jumlah batch per bulan</span><input id="p-batchBulan" type="number" inputmode="decimal" min="0" step="any" data-p="batchBulan"></label>
+        </div>
+      </section>
+      <div id="secs" class="forms"></div>
+      <section class="card">
+        <header><h2>Harga jual</h2></header>
+        <p class="help">Harga jual Anda dibandingkan dengan biaya total. Target margin dipakai untuk menghitung harga jual yang disarankan.</p>
+        <div class="fields">
+          <label class="f"><span>Harga jual per satuan (Rp)</span><input id="p-hargaJual" type="number" inputmode="decimal" min="0" step="any" data-p="hargaJual"></label>
+          <label class="f"><span>Target margin laba (%)</span><input id="p-margin" type="number" inputmode="decimal" min="0" max="95" step="any" data-p="margin"></label>
+          <label class="f"><span>Potongan platform atau komisi (%)</span><input id="p-fee" type="number" inputmode="decimal" min="0" max="95" step="any" data-p="fee"></label>
+        </div>
+      </section>
+    </div>
+
+    <aside class="result" id="result" aria-live="polite"></aside>
+  </div>
+
+  <p class="formula">Cara hitung: biaya bahan = jumlah dipakai ÷ isi per pembelian × harga beli. Overhead per batch = total biaya bulanan ÷ jumlah batch per bulan. HPP per satuan = HPP per batch ÷ (hasil per batch × (1 − susut)). Biaya operasional dihitung terpisah dari HPP dan ditambahkan saat menentukan harga jual dan laba. Titik impas = biaya tetap bulanan ÷ (harga jual − biaya variabel per satuan).</p>
+</div>
+
+<div class="dock" id="dock"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+var KEY='hpp-umkm-v1';
+var uid=function(){return Math.random().toString(36).slice(2,9)};
+var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')};
+var num=function(v){var x=parseFloat(v);return isFinite(x)?x:0};
+var rp=function(n){return isFinite(n)?(n<0?'-':'')+'Rp'+Math.round(Math.abs(n)).toLocaleString('id-ID'):'–'};
+var fmt=function(n){return isFinite(n)?n.toLocaleString('id-ID',{maximumFractionDigits:1}):'–'};
+var pct=function(n){return isFinite(n)?(n*100).toLocaleString('id-ID',{maximumFractionDigits:1})+'%':'–'};
+
+var SEC={
+  bahan:{title:'Bahan baku',help:'Bahan utama yang masuk ke produk. Isi harga dan isi sesuai kemasan beli, misalnya telur Rp54.000 untuk 30 butir.',add:'+ Tambah bahan',
+    fields:[{k:'n',l:'Nama bahan',t:'text',w:'w2'},{k:'pakai',l:'Dipakai per batch',t:'num'},{k:'satuan',l:'Satuan',t:'text'},{k:'harga',l:'Harga beli (Rp)',t:'num'},{k:'isi',l:'Isi per pembelian',t:'num'}],
+    sub:function(r){return r.isi>0?r.pakai/r.isi*r.harga:0}},
+  kemasan:{title:'Kemasan dan bahan penolong',help:'Box, plastik, label, tisu, gas kecil, dan bahan lain yang ikut terpakai per batch.',add:'+ Tambah kemasan',
+    fields:[{k:'n',l:'Nama kemasan',t:'text',w:'w2'},{k:'pakai',l:'Dipakai per batch',t:'num'},{k:'satuan',l:'Satuan',t:'text'},{k:'harga',l:'Harga beli (Rp)',t:'num'},{k:'isi',l:'Isi per pembelian',t:'num'}],
+    sub:function(r){return r.isi>0?r.pakai/r.isi*r.harga:0}},
+  tk:{title:'Tenaga kerja langsung',help:'Orang yang mengerjakan produksi. Hitung juga upah pemilik untuk waktu yang dipakai memproduksi.',add:'+ Tambah pekerjaan',
+    fields:[{k:'n',l:'Pekerjaan',t:'text',w:'w2'},{k:'orang',l:'Jumlah orang',t:'num'},{k:'jam',l:'Jam per batch',t:'num'},{k:'upah',l:'Upah per jam (Rp)',t:'num'}],
+    sub:function(r){return r.orang*r.jam*r.upah}},
+  oh:{title:'Overhead produksi per bulan',help:'Biaya tetap yang menunjang produksi: gas, listrik, air, sewa tempat, penyusutan alat. Dibagi rata ke setiap batch.',add:'+ Tambah overhead',
+    fields:[{k:'n',l:'Jenis biaya',t:'text',w:'w2'},{k:'bulan',l:'Biaya per bulan (Rp)',t:'num'}],
+    sub:function(r){return r.bulan}},
+  opex:{title:'Biaya operasional per bulan',help:'Di luar HPP: iklan, admin, ongkir yang Anda tanggung, pulsa. Dipakai untuk biaya total, harga saran, dan titik impas.',add:'+ Tambah biaya',
+    fields:[{k:'n',l:'Jenis biaya',t:'text',w:'w2'},{k:'bulan',l:'Biaya per bulan (Rp)',t:'num'}],
+    sub:function(r){return r.bulan}}
+};
+var ORDER=['bahan','kemasan','tk','oh','opex'];
+
+function newRow(sec){var r={id:uid()};SEC[sec].fields.forEach(function(f){r[f.k]=f.t==='num'?0:''});return r}
+function blank(){var p={id:uid(),nama:'Produk baru',satuan:'pcs',output:1,susut:0,batchBulan:1,hargaJual:0,margin:30,fee:0,sample:false};ORDER.forEach(function(s){p[s]=[newRow(s)]});return p}
+function mk(sec,arr){return arr.map(function(a){var r={id:uid()};SEC[sec].fields.forEach(function(f,i){r[f.k]=a[i]});return r})}
+function sample(){return{id:uid(),nama:'Brownies kukus',satuan:'pcs',output:20,susut:5,batchBulan:24,hargaJual:15000,margin:30,fee:2,sample:true,
+  bahan:mk('bahan',[['Tepung terigu',300,'gr',12000,1000],['Cokelat masak',400,'gr',60000,500],['Telur',6,'butir',54000,30],['Gula pasir',250,'gr',17000,1000],['Margarin',250,'gr',22000,500],['Cokelat bubuk',50,'gr',30000,250]]),
+  kemasan:mk('kemasan',[['Box mika',20,'pcs',35000,50],['Stiker label',20,'pcs',15000,100],['Kantong plastik',20,'pcs',10000,100]]),
+  tk:mk('tk',[['Membuat adonan dan mengukus',1,3,15000],['Packing',1,1,12000]]),
+  oh:mk('oh',[['Gas LPG',150000],['Listrik dan air',200000],['Penyusutan oven dan mixer',250000],['Sewa dapur',300000]]),
+  opex:mk('opex',[['Iklan media sosial',300000],['Ongkir dan administrasi',100000]])}}
+
+var state;
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.products)&&s.products.length){return s}}catch(e){}return null}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function P(){return state.products.find(function(p){return p.id===state.active})||state.products[0]}
+
+function compute(p){
+  var sum=function(a,f){return a.reduce(function(s,r){return s+f(r)},0)};
+  var bahan=sum(p.bahan,SEC.bahan.sub),kemasan=sum(p.kemasan,SEC.kemasan.sub),tk=sum(p.tk,SEC.tk.sub);
+  var ohBulan=sum(p.oh,SEC.oh.sub),opexBulan=sum(p.opex,SEC.opex.sub);
+  var batch=p.batchBulan>0?p.batchBulan:0;
+  var oh=batch?ohBulan/batch:0;
+  var hppBatch=bahan+kemasan+tk+oh;
+  var out=p.output*(1-Math.min(Math.max(p.susut,0),100)/100);
+  var hppUnit=out>0?hppBatch/out:NaN;
+  var unitBulan=out*batch;
+  var opexUnit=unitBulan>0?opexBulan/unitBulan:0;
+  var totalUnit=hppUnit+opexUnit;
+  var fee=p.fee/100,m=p.margin/100,den=1-m-fee;
+  var saran=den>0?totalUnit/den:NaN;
+  var harga=p.hargaJual;
+  var laba=harga>0?harga-totalUnit-fee*harga:NaN;
+  var varUnit=out>0?(bahan+kemasan+tk)/out:NaN;
+  var contrib=harga-varUnit-fee*harga;
+  var bepUnit=(harga>0&&contrib>0)?(ohBulan+opexBulan)/contrib:NaN;
+  return{bahan:bahan,kemasan:kemasan,tk:tk,oh:oh,ohBulan:ohBulan,opexBulan:opexBulan,hppBatch:hppBatch,out:out,hppUnit:hppUnit,unitBulan:unitBulan,
+    opexUnit:opexUnit,totalUnit:totalUnit,saran:saran,harga:harga,laba:laba,margin:harga>0?laba/harga:NaN,labaBulan:laba*unitBulan,
+    bepUnit:bepUnit,bepBatch:out>0?bepUnit/out:NaN,contrib:contrib,den:den};
+}
+window.__hpp={compute:compute,sample:sample};
+
+function rowHTML(sec,r){
+  var f=SEC[sec].fields;
+  return '<div class="row" data-row="'+r.id+'">'+f.map(function(x){
+    var isn=x.t==='num',val=isn?(r[x.k]?r[x.k]:''):r[x.k];
+    return '<label class="f '+(x.w||'')+'"><span>'+x.l+'</span><input id="'+sec+'-'+r.id+'-'+x.k+'" '+(isn?'type="number" inputmode="decimal" min="0" step="any" placeholder="0"':'type="text"')+' value="'+esc(val)+'" data-sec="'+sec+'" data-id="'+r.id+'" data-k="'+x.k+'"></label>';
+  }).join('')+'<div class="rowend"><output class="sub" title="Biaya baris ini">'+rp(SEC[sec].sub(r))+'</output><button type="button" class="ico" data-del="'+sec+':'+r.id+'" aria-label="Hapus baris">×</button></div></div>';
+}
+function renderSec(sec){
+  var box=document.getElementById('rows-'+sec);
+  box.innerHTML=P()[sec].map(function(r){return rowHTML(sec,r)}).join('');
+}
+function buildSections(){
+  document.getElementById('secs').innerHTML=ORDER.map(function(s){
+    var d=SEC[s];
+    return '<section class="card"><header><h2>'+d.title+'</h2><span class="tot" id="tot-'+s+'"></span></header><p class="help">'+d.help+'</p><div id="rows-'+s+'"></div><button type="button" class="btn add" data-add="'+s+'">'+d.add+'</button></section>';
+  }).join('');
+}
+function renderProductFields(){
+  var p=P();
+  document.querySelectorAll('[data-p]').forEach(function(el){var v=p[el.dataset.p];el.value=(el.type==='number'&&!v)?'':v});
+}
+function renderSelect(){
+  var sel=document.getElementById('pilih');
+  sel.innerHTML=state.products.map(function(p){return '<option value="'+p.id+'"'+(p.id===state.active?' selected':'')+'>'+esc(p.nama||'Tanpa nama')+'</option>'}).join('');
+}
+function renderDel(){
+  var z=document.getElementById('delzone');
+  z.innerHTML=confirmDel?'<span style="display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap">Hapus produk ini? <button class="btn danger" type="button" data-act="hapusya">Ya, hapus</button><button class="btn" type="button" data-act="hapustidak">Batal</button></span>':'<button class="btn danger" type="button" data-act="hapus">Hapus</button>';
+}
+var confirmDel=false;
+
+function renderResult(){
+  var p=P(),c=compute(p),sat=p.satuan||'satuan';
+  var parts=[['Bahan baku',c.bahan,'--c1'],['Kemasan',c.kemasan,'--c2'],['Tenaga kerja',c.tk,'--c3'],['Overhead',c.oh,'--c4']];
+  var tot=c.hppBatch;
+  var bar=parts.map(function(x){return '<i style="width:'+(tot>0?x[1]/tot*100:0)+'%;background:var('+x[2]+')"></i>'}).join('');
+  var legend=parts.map(function(x){return '<li><span class="dot" style="background:var('+x[2]+')"></span><span>'+x[0]+'</span><span class="v">'+rp(c.out>0?x[1]/c.out:NaN)+'</span><span class="p">'+(tot>0?pct(x[1]/tot):'–')+'</span></li>'}).join('');
+  var status;
+  if(!(c.harga>0))status='<span class="pill warn">Isi harga jual</span>';
+  else if(c.laba>=0)status='<span class="pill good">Untung</span>';
+  else status='<span class="pill bad">Rugi</span>';
+  var warn='';
+  if(c.harga>0&&isFinite(c.hppUnit)&&c.harga<c.hppUnit)warn='<p class="note" style="margin:12px 0 0">Harga jual lebih rendah dari HPP. Setiap penjualan menambah kerugian.</p>';
+  else if(c.den<=0)warn='<p class="note" style="margin:12px 0 0">Target margin ditambah potongan platform sudah 100% atau lebih, harga saran tidak bisa dihitung.</p>';
+  document.getElementById('result').innerHTML=
+   '<section class="card hero"><small>HPP per '+esc(sat)+'</small><div class="big">'+rp(c.hppUnit)+'</div>'+
+   '<p>HPP per batch '+rp(c.hppBatch)+' · hasil bersih '+fmt(c.out)+' '+esc(sat)+' per batch</p>'+
+   '<div class="bar" role="img" aria-label="Komposisi HPP">'+bar+'</div><ul class="legend">'+legend+'</ul></section>'+
+   '<section class="card" style="margin-top:14px"><div class="h3"><span>Harga jual dan laba</span>'+status+'</div><dl>'+
+   '<div><dt>HPP per '+esc(sat)+'</dt><dd>'+rp(c.hppUnit)+'</dd></div>'+
+   '<div><dt>Biaya operasional per '+esc(sat)+'</dt><dd>'+rp(c.opexUnit)+'</dd></div>'+
+   '<div><dt>Biaya total per '+esc(sat)+'</dt><dd>'+rp(c.totalUnit)+'</dd></div></dl><div class="sep"></div><dl>'+
+   '<div><dt>Harga jual saran (margin '+fmt(p.margin)+'%)</dt><dd>'+rp(c.saran)+'</dd></div>'+
+   '<div><dt>Harga jual Anda</dt><dd>'+(c.harga>0?rp(c.harga):'–')+'</dd></div>'+
+   '<div><dt>Laba per '+esc(sat)+'</dt><dd>'+rp(c.laba)+'</dd></div>'+
+   '<div><dt>Margin laba</dt><dd>'+pct(c.margin)+'</dd></div>'+
+   '<div><dt>Laba per bulan ('+fmt(c.unitBulan)+' '+esc(sat)+')</dt><dd>'+rp(c.labaBulan)+'</dd></div></dl><div class="sep"></div><dl>'+
+   '<div><dt>Titik impas per bulan</dt><dd>'+(isFinite(c.bepUnit)?fmt(Math.ceil(c.bepUnit))+' '+esc(sat):'–')+'</dd></div>'+
+   '<div><dt>Setara batch per bulan</dt><dd>'+(isFinite(c.bepBatch)?fmt(Math.ceil(c.bepBatch*10)/10):'–')+'</dd></div></dl>'+warn+
+   '<div class="actions"><button class="btn primary" type="button" data-act="csv">Unduh CSV</button><button class="btn" type="button" data-act="salin">Salin ringkasan</button></div></section>';
+  document.getElementById('dock').innerHTML='<div><small>HPP per '+esc(sat)+'</small><b>'+rp(c.hppUnit)+'</b></div><div style="text-align:right"><small>Laba per '+esc(sat)+'</small><b>'+rp(c.laba)+'</b></div>';
+  ORDER.forEach(function(s){
+    var t=P()[s].reduce(function(a,r){return a+SEC[s].sub(r)},0);
+    document.getElementById('tot-'+s).textContent=rp(t)+(s==='oh'||s==='opex'?' / bulan':' / batch');
+  });
+  document.getElementById('sampleNote').hidden=!p.sample;
+}
+function renderAll(){renderSelect();renderDel();renderProductFields();ORDER.forEach(renderSec);renderResult()}
+
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){t.hidden=true},2200)}
+
+function summary(){
+  var p=P(),c=compute(p),sat=p.satuan||'satuan';
+  return ['HPP '+p.nama,'HPP per batch: '+rp(c.hppBatch),'HPP per '+sat+': '+rp(c.hppUnit),'Biaya total per '+sat+': '+rp(c.totalUnit),
+    'Harga jual saran (margin '+fmt(p.margin)+'%): '+rp(c.saran),'Harga jual: '+(c.harga>0?rp(c.harga):'-'),'Laba per '+sat+': '+rp(c.laba),
+    'Titik impas per bulan: '+(isFinite(c.bepUnit)?fmt(Math.ceil(c.bepUnit))+' '+sat:'-')].join('\n');
+}
+function csv(){
+  var p=P(),c=compute(p),L=[];
+  var q=function(v){v=String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  var add=function(a){L.push(a.map(q).join(';'))};
+  add(['Produk',p.nama]);add(['Satuan',p.satuan]);add(['Hasil per batch',p.output]);add(['Susut (%)',p.susut]);add(['Batch per bulan',p.batchBulan]);add([]);
+  add(['Bahan baku','Dipakai','Satuan','Harga beli','Isi per pembelian','Biaya per batch']);
+  p.bahan.forEach(function(r){add([r.n,r.pakai,r.satuan,r.harga,r.isi,Math.round(SEC.bahan.sub(r))])});add([]);
+  add(['Kemasan','Dipakai','Satuan','Harga beli','Isi per pembelian','Biaya per batch']);
+  p.kemasan.forEach(function(r){add([r.n,r.pakai,r.satuan,r.harga,r.isi,Math.round(SEC.kemasan.sub(r))])});add([]);
+  add(['Tenaga kerja','Orang','Jam per batch','Upah per jam','Biaya per batch']);
+  p.tk.forEach(function(r){add([r.n,r.orang,r.jam,r.upah,Math.round(SEC.tk.sub(r))])});add([]);
+  add(['Overhead produksi','Biaya per bulan']);p.oh.forEach(function(r){add([r.n,r.bulan])});add([]);
+  add(['Biaya operasional','Biaya per bulan']);p.opex.forEach(function(r){add([r.n,r.bulan])});add([]);
+  add(['HPP per batch',Math.round(c.hppBatch)]);add(['HPP per satuan',Math.round(c.hppUnit)]);add(['Biaya total per satuan',Math.round(c.totalUnit)]);
+  add(['Harga jual saran',Math.round(c.saran)]);add(['Harga jual',p.hargaJual]);add(['Laba per satuan',Math.round(c.laba)]);
+  add(['Laba per bulan',Math.round(c.labaBulan)]);add(['Titik impas (satuan per bulan)',isFinite(c.bepUnit)?Math.ceil(c.bepUnit):'']);
+  return L.join('\r\n');
+}
+
+document.addEventListener('input',function(e){
+  var t=e.target,p=P();
+  if(t.dataset.p){
+    p[t.dataset.p]=t.type==='number'?num(t.value):t.value;
+    if(t.dataset.p==='nama'){var o=document.querySelector('#pilih option[value="'+p.id+'"]');if(o)o.textContent=p.nama||'Tanpa nama'}
+  }else if(t.dataset.sec){
+    var r=p[t.dataset.sec].find(function(x){return x.id===t.dataset.id});if(!r)return;
+    r[t.dataset.k]=t.type==='number'?num(t.value):t.value;
+    var out=t.closest('.row').querySelector('.sub');if(out)out.textContent=rp(SEC[t.dataset.sec].sub(r));
+  }else return;
+  p.sample=false;save();renderResult();
+});
+document.getElementById('pilih').addEventListener('change',function(e){state.active=e.target.value;confirmDel=false;save();renderAll()});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.dataset.add){P()[b.dataset.add].push(newRow(b.dataset.add));P().sample=false;save();renderSec(b.dataset.add);renderResult();return}
+  if(b.dataset.del){var a=b.dataset.del.split(':');P()[a[0]]=P()[a[0]].filter(function(r){return r.id!==a[1]});P().sample=false;save();renderSec(a[0]);renderResult();return}
+  var act=b.dataset.act;if(!act)return;
+  if(act==='baru'){var n=blank();state.products.push(n);state.active=n.id;confirmDel=false;save();renderAll();toast('Produk baru dibuat');}
+  else if(act==='dup'){var c=JSON.parse(JSON.stringify(P()));c.id=uid();c.nama=(c.nama||'Produk')+' (salinan)';c.sample=false;ORDER.forEach(function(s){c[s].forEach(function(r){r.id=uid()})});state.products.push(c);state.active=c.id;save();renderAll();toast('Produk diduplikat')}
+  else if(act==='hapus'){confirmDel=true;renderDel()}
+  else if(act==='hapustidak'){confirmDel=false;renderDel()}
+  else if(act==='hapusya'){var id=state.active;state.products=state.products.filter(function(p){return p.id!==id});if(!state.products.length)state.products.push(blank());state.active=state.products[0].id;confirmDel=false;save();renderAll();toast('Produk dihapus')}
+  else if(act==='salin'){var txt=summary();var done=function(){toast('Ringkasan disalin')};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){toast('Salin tidak didukung di tampilan ini')})}else toast('Salin tidak didukung di tampilan ini')}
+  else if(act==='csv'){
+    var name='HPP-'+(P().nama||'produk').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-')+'.csv';
+    if(!window.claude||!window.claude.use){toast('Unduh tidak tersedia di tampilan ini');return}
+    window.claude.use('downloads').then(function(d){
+      if(!d){toast('Unduh tidak tersedia di tampilan ini');return}
+      return d.save({filename:name,data:csv()}).then(function(){toast('File disimpan')},function(err){if(!err||err.code!=='declined')toast('File tidak dapat disimpan di tampilan ini')});
+    });
+  }
+});
+
+state=load();
+if(!state){var s=sample();state={active:s.id,products:[s]}}
+if(!state.products.some(function(p){return p.id===state.active}))state.active=state.products[0].id;
+buildSections();renderAll();
+})();
+</script>
+
+</body></html>
